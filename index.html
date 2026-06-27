@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f1419" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.github.com; img-src 'self' data:; base-uri 'self'; frame-ancestors 'none'" />
+  <title>Mining</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    html, body { margin: 0; background: #0f1419; color: #e7ecf3; min-height: 100vh; }
+    #boot-splash {
+      position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 16px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(61, 220, 151, 0.06), transparent),
+        radial-gradient(circle at top, #1b2738, #0f1419 70%, #0a0e14);
+      color: #8b98a8; font-family: "Segoe UI", system-ui, sans-serif;
+      transition: opacity .2s ease;
+    }
+    #boot-splash.hidden { opacity: 0; pointer-events: none; }
+    #boot-splash strong { color: #e7ecf3; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; }
+    .boot-spinner {
+      width: 28px; height: 28px; border: 3px solid #2b3648;
+      border-top-color: #3ddc97; border-radius: 50%;
+      animation: boot-spin .8s linear infinite;
+      box-shadow: 0 0 16px rgba(61, 220, 151, 0.2);
+    }
+    @keyframes boot-spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .boot-spinner { animation: none; border-top-color: #3ddc97; }
+    }
+    .login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  </style>
+</head>
+<body>
+  <div id="boot-splash" aria-live="polite" aria-busy="true">
+    <strong>Mining</strong>
+    <div class="boot-spinner" aria-hidden="true"></div>
+  </div>
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <h1>Mining</h1>
+      <div id="bio-section" class="hidden">
+        <p class="meta">Desbloqueie com Face ID</p>
+        <button type="button" id="btn-biometric" class="btn-bio">Face ID</button>
+        <button type="button" id="btn-use-pin" class="btn-link">Usar PIN de 6 dígitos</button>
+      </div>
+      <div id="pin-section">
+        <p class="meta">Digite o PIN de 6 dígitos</p>
+        <div id="pin-row" class="pin-row">
+          <input class="pin-cell" type="tel" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="PIN 1" />
+          <input class="pin-cell" type="tel" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="PIN 2" />
+          <input class="pin-cell" type="tel" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="PIN 3" />
+          <input class="pin-cell" type="tel" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="PIN 4" />
+          <input class="pin-cell" type="tel" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="PIN 5" />
+          <input class="pin-cell" type="tel" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="PIN 6" />
+        </div>
+      </div>
+      <p id="login-error" class="login-error"></p>
+    </div>
+  </div>
+
+  <div id="app-content" style="display:none" data-visual-state="idle">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h1><span id="state-indicator" class="state-indicator idle" aria-hidden="true"></span> Mining</h1>
+        <span id="version-label" class="version-label"></span>
+      </div>
+      <div class="topbar-actions">
+        <span id="update-badge" class="badge" hidden>NOVO</span>
+        <button type="button" id="btn-refresh" class="icon-btn" title="Atualizar" aria-label="Atualizar">↻</button>
+        <button type="button" id="btn-logout" class="icon-btn" title="Sair" aria-label="Sair">⎋</button>
+      </div>
+    </header>
+
+    <p class="page-subtitle">RTX 3060 · painel remoto</p>
+    <p id="stale-note" class="stale-note" hidden></p>
+    <div id="mandatory-update" class="mandatory-update hidden" role="alert">
+      <strong>Atualização obrigatória</strong>
+      <p id="mandatory-update-text">Recarregue o painel para continuar.</p>
+      <button type="button" id="btn-mandatory-reload" class="btn-primary">Atualizar agora</button>
+    </div>
+
+    <div class="grid">
+      <div class="card card-state">
+        <div class="label" id="mode-heading">Estado</div>
+        <div class="value mode mode-idle" id="mode">—</div>
+        <div class="reason config-line" id="config-line">—</div>
+        <div class="reason" id="reason">—</div>
+        <div class="reason" id="game-status">Jogo: —</div>
+      </div>
+      <div class="card card-gpu">
+        <div class="label">Temperatura GPU</div>
+        <div class="value" id="temp-gpu">—</div>
+        <div class="reason" id="temp-memory">VRAM —</div>
+      </div>
+      <div class="card card-gpu">
+        <div class="label">Potência / Uso</div>
+        <div class="value" id="power">—</div>
+        <div class="reason" id="util">Uso —</div>
+      </div>
+      <div class="card card-profit">
+        <div class="label">Estimativa / dia (★ = mais lucrativa)</div>
+        <div class="reason" id="profit-ergo">Ergo —</div>
+        <div class="reason" id="profit-nicehash">NiceHash —</div>
+        <div class="reason hidden" id="profit-clore">Clore —</div>
+        <div class="reason profit-power" id="profit-power"></div>
+        <div class="reason profit-source" id="profit-source"></div>
+      </div>
+      <div class="card card-stats-24h">
+        <div class="label">Mineracao · 24 h</div>
+        <div class="value" id="stats-uptime">—</div>
+        <div class="reason" id="stats-hashrate">Hashrate —</div>
+        <div class="reason" id="stats-mining">Tempo minerando —</div>
+        <div class="reason" id="stats-modes">Trocas de modo —</div>
+      </div>
+      <div class="card card-wallet">
+        <div class="label">Carteira total</div>
+        <div class="value wallet-total" id="wallet-total">—</div>
+        <div class="reason" id="wallet-ergo">Ergo —</div>
+        <div class="reason" id="wallet-nh">NiceHash —</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header-row">
+        <h2>Controle</h2>
+        <button type="button" id="btn-refresh-inline" class="btn-refresh-inline">↻ Atualizar</button>
+      </div>
+      <div class="buttons">
+        <button type="button" class="btn-primary" id="toggle-btn">Pausar / Retomar</button>
+        <button type="button" id="btn-auto">Automático</button>
+        <button type="button" id="btn-ergo">Ergo</button>
+        <button type="button" id="btn-nicehash">NiceHash</button>
+        <button type="button" id="btn-restart" class="btn-warn hidden">Reiniciar PC</button>
+      </div>
+      <p id="cmd-status" class="cmd-status"></p>
+    </div>
+
+    <div class="grid">
+      <div class="card history-card">
+        <h2>Carteira (USD) <span class="history-meta" id="balance-chart-meta"></span></h2>
+        <canvas id="balance-chart" width="400" height="100"></canvas>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card history-card">
+        <h2>
+          Histórico térmico
+          <span class="history-meta" id="gpu-history-meta">últimas leituras</span>
+        </h2>
+        <div class="history-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th class="col-time">Hora</th>
+                <th class="col-num">GPU</th>
+                <th class="col-num col-vram">VRAM</th>
+                <th class="col-num">W</th>
+                <th class="col-mode">Modo</th>
+              </tr>
+            </thead>
+            <tbody id="gpu-history"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card history-card">
+        <h2>
+          Trocas de modo
+          <span class="history-meta" id="mode-history-meta"></span>
+        </h2>
+        <div class="buttons history-nav">
+          <button type="button" id="mode-prev">← Anterior</button>
+          <button type="button" id="mode-next">Próxima →</button>
+        </div>
+        <div class="history-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th class="col-time">Hora</th>
+                <th class="col-mode">De</th>
+                <th class="col-mode">Para</th>
+                <th>Motivo</th>
+              </tr>
+            </thead>
+            <tbody id="mode-history"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <p class="meta page-updated" id="page-updated"></p>
+  </div>
+
+  <script>
+    (function () {
+      var s = document.createElement("script");
+      s.src = "boot.js?t=" + Date.now();
+      document.body.appendChild(s);
+    })();
+  </script>
+</body>
+</html>

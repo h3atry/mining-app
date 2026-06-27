@@ -1,0 +1,18 @@
+{
+  "app": "1.6.7",
+  "min_app": "1.5.0",
+  "data_rev": "0029fb3261866d3f79b2346b3e5d5fb3788153afd8f5fe6be02d38542b256149",
+  "sync_interval_seconds": 25,
+  "deploy_interval_seconds": 120,
+  "data_push_seconds": 25,
+  "webauthn_challenge": "onxT_4l4-Tynrh-3J7XC8gb1NO5MUOsqFlqP0ONxmBU",
+  "integrity": {
+    "boot.js": "sha384-DlFAI8LtJVokb1CkyJ7rsiXLaIjuPeosoCNW7Em/DtYUTxwZ3ft72clXUQ5Gp3h/",
+    "config.js": "sha384-yjJrU2caDgM7/BZDHmpfN+SLxI0zFjd19GABt902IcMxyiIA1DW8uANbwY5b996m",
+    "biometric.js": "sha384-6rV+0k6rxqnVpFDuPVzdlwPg5GviZ6kYteJOWZfbFs90ep2t4IDVJH2w5yP7kWsS",
+    "auth.js": "sha384-E79/C2zDQHzJuRbJzLw8YrTLuyNn6YNVi+1YIRpUe/eQGO3/lK9gmcAFCiwFYhDJ",
+    "commands.js": "sha384-eIoaxk4NeMHFlZfZPxnoSVi9OOqIdi1Hxuzf/MXVDV3s0VyJzF3FewvEzB27Oz9Y",
+    "app.js": "sha384-GWhTxaPZhmrIZJuFpSl8qBncwyQZMO5/55M24jqWBqsa0xVDScK+Po8aOLiZisc2",
+    "styles.css": "sha384-DhZgVtBQGUujMwxK2xdiYiFBVNSUvj3YGGQY0a2rUGuSF7RUcu4IK/JUVcMAn5Qg"
+  }
+}

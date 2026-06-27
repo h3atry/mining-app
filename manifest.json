@@ -1,0 +1,9 @@
+{
+  "name": "Mining Orchestrator",
+  "short_name": "Mining",
+  "start_url": "./?b=1.6.7",
+  "display": "standalone",
+  "background_color": "#0f1419",
+  "theme_color": "#0f1419",
+  "lang": "pt-BR"
+}
