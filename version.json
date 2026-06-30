@@ -1,11 +1,11 @@
 {
   "app": "1.6.7",
   "min_app": "1.5.0",
-  "data_rev": "b0f1d46600aaf47d1c43c74603e36bc87f5516031a44490f75b23857aa365957",
+  "data_rev": "32b38753de5666606f6aa3eddf819d3866a2f43f06a8f23fcbb58b166f7d0457",
   "sync_interval_seconds": 25,
   "deploy_interval_seconds": 120,
   "data_push_seconds": 25,
-  "webauthn_challenge": "90ozpbl3HzQB-xdULP_qMe5f--yEj4cj_Ac0WECar4k",
+  "webauthn_challenge": "KJi9-9j01TCqpRrtk_QoKgb-d049uS8l0WMjh4AnfB0",
   "integrity": {
     "boot.js": "sha384-DlFAI8LtJVokb1CkyJ7rsiXLaIjuPeosoCNW7Em/DtYUTxwZ3ft72clXUQ5Gp3h/",
     "config.js": "sha384-yjJrU2caDgM7/BZDHmpfN+SLxI0zFjd19GABt902IcMxyiIA1DW8uANbwY5b996m",
